@@ -1,9 +1,8 @@
-// C-RegistrarCheckIn — UC09 – Realizar check-in diário de esforço
-// Controller: recebe as ações da tela (F-) e aplica as regras usando as entidades (E-).
-import { pendente } from '../utils/pendente';
-
+// C-RegistrarCheckIn — UC09 Registrar check-in de esforço (VCP07: E-Jornada -> E-CheckInEsforco)
+// RN021: nível de 1 a 5, um por dia, observação opcional.
 export const RegistrarCheckIn = {
-  registrarCheckIn(nivel, observacao) {
-    return pendente('RegistrarCheckIn.registrarCheckIn');
+  // registrarCheckIn(jornada, nivel, observacao) : void
+  async registrarCheckIn(jornada, nivel, observacao) {
+    await jornada.registrarCheckIn(nivel, observacao);
   },
 };

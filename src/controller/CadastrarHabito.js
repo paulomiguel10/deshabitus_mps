@@ -19,7 +19,6 @@ export const CadastrarHabito = {
   // iniciarCadastroHabito() : opções de hábito
   iniciarCadastroHabito() {
     rascunho = {};
-    EscolherModo.iniciarEscolhaModo(null);
     return OPCOES_HABITO;
   },
 
@@ -53,10 +52,10 @@ export const CadastrarHabito = {
     rascunho.metaDias = meta;
   },
 
-  // registrarHabito(usuario) : E-Jornada
-  async registrarHabito(usuario) {
+  // registrarHabito(usuario, modo) : E-Jornada
+  async registrarHabito(usuario, modo) {
     const { nome, consumoDiario, custoUnitario, tempoMedioConsumo, dataInicio, metaDias } = rascunho;
-    const modo = EscolherModo.obterModoEscolhido(); // «include» UC03
+    await EscolherModo.escolherModo(modo); // «include» UC03 (VCP02: C-CadastrarHabito -> C-EscolherModo)
     const jornada = await usuario.criarJornada(nome, consumoDiario, custoUnitario, tempoMedioConsumo, dataInicio, metaDias, modo);
     rascunho = {};
     return jornada;

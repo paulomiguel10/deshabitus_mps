@@ -39,6 +39,7 @@ Comandos úteis:
 | `react-native-gifted-charts` + `react-native-svg` + `expo-linear-gradient` | Gráficos de gatilhos, esforço semanal e economia | RN20, RF05, RF09 |
 | `@react-native-community/datetimepicker` | Escolher data de início e data/hora do registro | RN07, RN15 |
 | `@expo/vector-icons` | Ícones | – |
+| `@expo-google-fonts/nunito-sans` + `expo-font` | Fonte do design system (Figma) | – |
 | `eslint` + `eslint-config-expo` | Padrão de código | – |
 
 **Widgets (RF07)** ainda não têm biblioteca: exigem código nativo e não rodam no Expo Go. Decidir quando o RF07 for implementado (prioridade Baixa).
@@ -62,14 +63,14 @@ src/
 │                             RegistroTentacao, CheckInEsforco, Conquista, Desafio, Convite, Mensagem)
 │                             + enums.js (ModoDesabituacao, Resultado, TipoConquista, StatusConvite)
 ├── view/                 F-  Classes de fronteira: uma tela por F- (TelaJornada, TelaSOS, ...)
-│   └── components/           Peças reutilizáveis (Botao, Campo, Card, Tela, Opcoes)
+│   └── components/           Design system Frutiger Aero (Tela, Fundo, Texto, Botao, Campo, Card, Opcoes, CartaoOpcao...)
 ├── controller/           C-  Classes de controle: uma por caso de uso (CadastrarHabito, AcionarSOS, ...)
 ├── database/             Tabelas SQLite (atributos do DC-ENTIDADE) e migrações
 ├── services/             Firebase, verificarConexao(), sincronização
 ├── events/               Barramento de eventos entre módulos (ADR-009)
 ├── strategies/           Exibição no modo padrão/cego (ADR-010)
 ├── navigation/           Rotas (nomes = classes F-)
-├── theme/ utils/         Cores, datas, IDs
+├── theme/ utils/         Tokens do design system (cores, gradientes, fonte Nunito Sans), datas, IDs
 ```
 
 Cada método do diagrama já existe no arquivo da classe e chama `pendente('Classe.metodo')`.
@@ -83,7 +84,8 @@ Implementar = trocar esse `pendente(...)` pelo código. Procure `TODO` e `penden
 4. **Números de progresso passam pela strategy** (`obterModoExibicao(modo)`), senão o modo cego vaza (RN09).
 5. **IDs são UUID** (`novoId()`), nunca autoincremento.
 6. **Mudou o banco?** Crie uma versão nova (`SCHEMA_V3`...) + um passo em `migracoes.js` e aumente o `VERSAO_SCHEMA`. Nunca edite um schema que já foi publicado.
-7. **Git:** uma branch por caso de uso (`uc06-registrar-gatilho`), `npm run lint` antes do commit, Pull Request para a `main`.
+7. **Visual:** use os componentes de `src/view/components` (`Texto` no lugar de `Text`) e as cores de `src/theme/cores.js`. Nada de cor solta na tela.
+8. **Git:** uma branch por caso de uso (`uc06-registrar-gatilho`), `npm run lint` antes do commit, Pull Request para a `main`.
 
 ## Como o DC-ENTIDADE virou código e banco
 

@@ -4,7 +4,7 @@
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { Usuario } from '../model/Usuario';
 import { gravarUsuarioLocal } from '../database/consultas';
-import { auth, traduzirErroFirebase } from '../services/firebase';
+import { auth, firebaseConfigurado, traduzirErroFirebase } from '../services/firebase';
 import { verificarConexao } from '../services/conexao';
 import { ErroNegocio } from '../utils/erros';
 import { agora } from '../utils/datas';
@@ -12,6 +12,9 @@ import { agora } from '../utils/datas';
 const EMAIL_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 async function exigirConexao(acao) {
+  if (!firebaseConfigurado) {
+    throw new ErroNegocio('Firebase não configurado neste computador: crie o arquivo .env (TUTORIAL.md, seção 4).');
+  }
   if (!(await verificarConexao())) {
     throw new ErroNegocio(`Sem internet. ${acao} precisa de conexão; o resto do app funciona offline.`);
   }

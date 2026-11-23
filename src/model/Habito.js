@@ -1,5 +1,4 @@
 // E-Habito (DC-ENTIDADE) — parte da E-Jornada: acompanha (Jornada 1 ◆ 1 Habito)
-import { pendente } from '../utils/pendente';
 
 export class Habito {
   constructor({ id, jornadaId, nome, consumoDiario, custoUnitario, tempoMedioConsumo } = {}) {
@@ -22,9 +21,15 @@ export class Habito {
       && inteiroPositivo(this.tempoMedioConsumo);
   }
   // + calcularEconomia(dias : int) : double  (RN013)
-  calcularEconomia(dias) { return pendente('Habito.calcularEconomia'); }
+  // custo unitário × consumo evitado (dias × consumo diário)
+  calcularEconomia(dias) {
+    return Math.max(0, dias) * this.consumoDiario * this.custoUnitario;
+  }
   // + calcularTempoPoupado(dias : int) : int  (RN014)
-  calcularTempoPoupado(dias) { return pendente('Habito.calcularTempoPoupado'); }
+  // tempo médio × consumo evitado, em minutos
+  calcularTempoPoupado(dias) {
+    return Math.max(0, dias) * this.consumoDiario * this.tempoMedioConsumo;
+  }
   // + obterNome() : char
   obterNome() { return this.nome; }
 }

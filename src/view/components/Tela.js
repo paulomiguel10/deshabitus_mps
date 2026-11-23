@@ -1,20 +1,34 @@
-import { ScrollView, StyleSheet, Text } from 'react-native';
+// Moldura de todas as telas: fundo Frutiger Aero + área segura + rolagem + cabeçalho de texto.
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { cores } from '../../theme/cores';
+import Fundo from './Fundo';
+import Texto from './Texto';
+import { cores, espaco } from '../../theme/cores';
 
-export default function Tela({ titulo, children }) {
+export default function Tela({ sobretitulo, titulo, subtitulo, topo, children }) {
+  const temCabecalho = sobretitulo || titulo || subtitulo;
   return (
-    <SafeAreaView style={styles.area} edges={['top', 'left', 'right']}>
-      <ScrollView contentContainerStyle={styles.conteudo} keyboardShouldPersistTaps="handled">
-        {titulo ? <Text style={styles.titulo} accessibilityRole="header">{titulo}</Text> : null}
-        {children}
-      </ScrollView>
-    </SafeAreaView>
+    <View style={styles.raiz}>
+      <Fundo />
+      <SafeAreaView style={styles.raiz} edges={['top', 'left', 'right']}>
+        <ScrollView contentContainerStyle={styles.conteudo} keyboardShouldPersistTaps="handled">
+          {topo}
+          {temCabecalho ? (
+            <View style={styles.cabecalho}>
+              {sobretitulo ? <Texto variante="sobretitulo">{sobretitulo}</Texto> : null}
+              {titulo ? <Texto variante="h1" accessibilityRole="header">{titulo}</Texto> : null}
+              {subtitulo ? <Texto cor={cores.textoSuave}>{subtitulo}</Texto> : null}
+            </View>
+          ) : null}
+          {children}
+        </ScrollView>
+      </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  area: { flex: 1, backgroundColor: cores.fundo },
-  conteudo: { padding: 20, gap: 14 },
-  titulo: { fontSize: 24, fontWeight: '700', color: cores.primaria, marginBottom: 4 },
+  raiz: { flex: 1 },
+  conteudo: { padding: espaco.xg, paddingBottom: espaco.xxxg + espaco.g, gap: espaco.g },
+  cabecalho: { gap: espaco.xs + 2, marginBottom: espaco.xs },
 });

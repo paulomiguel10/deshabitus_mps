@@ -1,23 +1,30 @@
-// F-TelaConfiguracoes — UC03/UC08: modo de desabituação e notificações
-// TODO (UC08): notificações motivacionais. O acesso à conta (UC01) também fica aqui.
-import { Text } from 'react-native';
+// F-TelaConfiguracoes — UC08 Configurar notificações motivacionais (VCP06)
+// Pelo VCP06 esta tela se liga só ao C-ConfigurarNotificacoes.
+// Os atalhos abaixo só navegam para as telas de outros casos de uso (não acessam entidades).
+// TODO (UC08): notificações motivacionais.
 import Tela from './components/Tela';
+import Texto from './components/Texto';
 import Card from './components/Card';
-import Botao from './components/Botao';
-import { useSessao } from './SessaoContext';
-import { ModoDesabituacao } from '../model/enums';
+import ItemLista from './components/ItemLista';
 
 export default function TelaConfiguracoes({ navigation }) {
-  const { jornada } = useSessao();
-  const modoAtual = jornada?.obterModo() === ModoDesabituacao.CEGO ? 'Desabituação cega' : 'Desabituação padrão';
-
   return (
     <Tela titulo="Ajustes">
-      <Card titulo="Modo de desabituação">
-        <Text>{modoAtual}</Text>
-        <Botao titulo="Alterar modo" variante="contorno" onPress={() => navigation.navigate('TelaOpcoesJornada')} />
+      <Card titulo="Notificações motivacionais" icone="notifications-outline">
+        <Texto>A implementar (UC08).</Texto>
       </Card>
-      <Botao titulo="Conta e perfil" variante="contorno" onPress={() => navigation.navigate('TelaConta')} />
+      <ItemLista
+        titulo="Modo de desabituação"
+        descricao="Padrão ou cego"
+        icone="eye-outline"
+        onPress={() => navigation.navigate('TelaOpcoesJornada')}
+      />
+      <ItemLista
+        titulo="Conta e perfil"
+        descricao="Nome, e-mail e exclusão da conta"
+        icone="person-outline"
+        onPress={() => navigation.navigate('TelaConta')}
+      />
     </Tela>
   );
 }
