@@ -1,5 +1,5 @@
 // E-Gatilho (DC-ENTIDADE) — motivadoPor: E-RegistroTentacao 0..* — 0..1 E-Gatilho
-import { pendente } from '../utils/pendente';
+import { buscarTodos } from '../database/banco';
 
 export class Gatilho {
   constructor({ id, descricao } = {}) {
@@ -8,5 +8,8 @@ export class Gatilho {
   }
 
   // + listarGatilhos() : E-Gatilho  (estático)
-  static listarGatilhos() { return pendente('Gatilho.listarGatilhos'); }
+  static async listarGatilhos() {
+    const linhas = await buscarTodos('SELECT id, descricao FROM gatilho ORDER BY rowid');
+    return linhas.map((linha) => new Gatilho(linha));
+  }
 }

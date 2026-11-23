@@ -1,4 +1,4 @@
-// Cria/atualiza o banco ao abrir o app (usado no onInit do <SQLiteProvider> em App.js).
+// Cria/atualiza o banco ao abrir o app (chamado por iniciarBanco() em database/banco.js).
 // Para mudar a estrutura: crie SCHEMA_V2 em schema.js e um novo passo aqui.
 // Nunca edite o SCHEMA_V1 depois que alguém da equipe já rodou o app.
 import { SCHEMA_V1, VERSAO_SCHEMA } from './schema';

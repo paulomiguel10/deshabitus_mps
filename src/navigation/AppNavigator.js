@@ -3,7 +3,9 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import { ActivityIndicator, View } from 'react-native';
 import { cores } from '../theme/cores';
+import { useSessao } from '../view/SessaoContext';
 
 import TelaJornada from '../view/TelaJornada';
 import TelaEconomia from '../view/TelaEconomia';
@@ -48,16 +50,37 @@ function Abas() {
 }
 
 export default function AppNavigator() {
-  // TODO (UC01): mostrar TelaConta enquanto não houver usuário logado
+  const { carregando, usuario, jornada } = useSessao();
+
+  if (carregando) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', backgroundColor: cores.fundo }}>
+        <ActivityIndicator color={cores.primaria} />
+      </View>
+    );
+  }
+
+  // Navegação condicional (Fase 1.3):
+  //   sem usuário            -> F-TelaConta (UC01)
+  //   usuário sem jornada    -> F-TelaEscolhaHabito / F-TelaOpcoesJornada (UC02 / UC03)
+  //   usuário com jornada    -> abas + telas por cima
   return (
     <Stack.Navigator screenOptions={{ headerTintColor: cores.primaria, headerBackTitle: 'Voltar' }}>
-      <Stack.Screen name="Abas" component={Abas} options={{ headerShown: false }} />
-      <Stack.Screen name="TelaConta" component={TelaConta} options={{ title: 'Conta' }} />
-      <Stack.Screen name="TelaEscolhaHabito" component={TelaEscolhaHabito} options={{ title: 'Hábito' }} />
-      <Stack.Screen name="TelaOpcoesJornada" component={TelaOpcoesJornada} options={{ title: 'Jornada' }} />
-      <Stack.Screen name="TelaSOS" component={TelaSOS} options={{ title: 'SOS', presentation: 'fullScreenModal' }} />
-      <Stack.Screen name="TelaRegistroGatilhos" component={TelaRegistroGatilhos} options={{ title: 'Registrar' }} />
-      <Stack.Screen name="TelaPercepcaoEsforco" component={TelaPercepcaoEsforco} options={{ title: 'Check-in' }} />
+      {!usuario ? (
+        <Stack.Screen name="TelaConta" component={TelaConta} options={{ headerShown: false }} />
+      ) : !jornada ? (
+        <>
+          <Stack.Screen name="TelaEscolhaHabito" component={TelaEscolhaHabito} options={{ title: 'Seu hábito' }} />
+          <Stack.Screen name="TelaOpcoesJornada" component={TelaOpcoesJornada} options={{ title: 'Sua jornada' }} />
+        </>
+      ) : (
+        <>
+          <Stack.Screen name="Abas" component={Abas} options={{ headerShown: false }} />
+          <Stack.Screen name="TelaSOS" component={TelaSOS} options={{ title: 'SOS', presentation: 'fullScreenModal' }} />
+          <Stack.Screen name="TelaRegistroGatilhos" component={TelaRegistroGatilhos} options={{ title: 'Registrar' }} />
+          <Stack.Screen name="TelaPercepcaoEsforco" component={TelaPercepcaoEsforco} options={{ title: 'Check-in' }} />
+        </>
+      )}
     </Stack.Navigator>
   );
 }

@@ -5,6 +5,7 @@
 // ATENÇÃO (RNF04 / ADR-005): o atributo senha NÃO é gravado no SQLite.
 // A senha vai só para o Firebase Authentication, que guarda o hash.
 import { pendente } from '../utils/pendente';
+import { buscarUm } from '../database/banco';
 
 export class Usuario {
   constructor({ id, nome, email, senha = null, aceiteTermos = false, dataAceiteTermos = null, notificacoesAtivas = false } = {}) {
@@ -30,7 +31,10 @@ export class Usuario {
   // + excluirConta() : void  (RN04)
   excluirConta() { return pendente('Usuario.excluirConta'); }
   // + possuiJornadaAtiva() : boolean  (RN05)
-  possuiJornadaAtiva() { return pendente('Usuario.possuiJornadaAtiva'); }
+  async possuiJornadaAtiva() {
+    const linha = await buscarUm('SELECT 1 FROM jornada WHERE usuarioId = ? AND ativa = 1', this.id);
+    return linha !== null;
+  }
   // + criarJornada(nome, consumoDiario : int, custoUnitario : double, tempoMedioConsumo : int, dataInicio : int, metaDias : int, modo : ModoDesabituacao) : E-Jornada
   criarJornada(nome, consumoDiario, custoUnitario, tempoMedioConsumo, dataInicio, metaDias, modo) {
     return pendente('Usuario.criarJornada');

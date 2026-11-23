@@ -1,5 +1,5 @@
 // Firebase: autenticação (E-Usuario), backup/sincronização e desafios em grupo (ADR-002, ADR-005).
-// O app NÃO depende dele para funcionar no dia a dia (offline-first, ADR-008).
+// O app não depende dele no dia a dia (offline-first, ADR-008), mas o cadastro e o 1º login sim (RNF10).
 import { initializeApp, getApps } from 'firebase/app';
 import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
@@ -14,18 +14,18 @@ const config = {
   appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Sem .env preenchido, o app roda em "modo local" (sem login real nem nuvem).
-export const firebaseConfigurado = Boolean(config.apiKey && config.projectId);
+// false = o .env não foi preenchido (ver TUTORIAL.md, seção 4)
+export const firebaseConfigurado = Boolean(config.apiKey && config.projectId && config.appId);
 
 let app = null;
 let auth = null;
-let db = null;
+let firestore = null;
 
 if (firebaseConfigurado) {
   app = getApps().length ? getApps()[0] : initializeApp(config);
-  // Mantém a sessão salva no aparelho: depois do 1º login o app abre offline (RNF10)
+  // Sessão salva no aparelho: depois do 1º login o app abre mesmo offline (RNF10)
   auth = initializeAuth(app, { persistence: getReactNativePersistence(AsyncStorage) });
-  db = getFirestore(app);
+  firestore = getFirestore(app);
 }
 
-export { app, auth, db };
+export { app, auth, firestore };
