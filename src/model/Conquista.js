@@ -1,14 +1,13 @@
-// E-Conquista
-// {RN22/RN23: só medalhas e conquistas de manutenção; os marcos são calculados pela Jornada}
-import { pendente } from '../utils/pendente';
+// E-Conquista (DC-ENTIDADE) — parte da E-Jornada: conquista (Jornada 1 ◆ 0..*)
+// {RN022/RN023: só medalhas e conquistas de manutenção} {RN024: concedida uma única vez, nunca removida}
+// Sem operações no diagrama: quem cria e lista é a E-Jornada (verificarConquistas, obterConquistas).
 
 export class Conquista {
-  constructor({ id, nome, tipo, diasNecessarios } = {}) {
+  constructor({ id, jornadaId, tipo, nome, diasNecessarios } = {}) {
     this.id = id;
-    this.nome = nome;
-    this.tipo = tipo; // TipoConquista.MEDALHA | TipoConquista.MANUTENCAO
-    this.diasNecessarios = diasNecessarios;
+    this.jornadaId = jornadaId;           // composição com a jornada
+    this.tipo = tipo;                     // TipoConquista
+    this.nome = nome;                     // char
+    this.diasNecessarios = diasNecessarios; // int
   }
-
-  static obterConquistas(jornadaId) { return pendente('Conquista.obterConquistas'); }
 }

@@ -85,19 +85,33 @@ Implementar = trocar esse `pendente(...)` pelo código. Procure `TODO` e `penden
 6. **Mudou o banco?** Crie `SCHEMA_V2` + passo em `migracoes.js`. Não edite o V1.
 7. **Git:** uma branch por caso de uso (`uc06-registrar-gatilho`), `npm run lint` antes do commit, Pull Request para a `main`.
 
-## Mapa caso de uso → código
+## Como o DC-ENTIDADE virou código e banco
 
-| UC | Controle (C-) | Fronteira (F-) | Entidades (E-) |
-|---|---|---|---|
-| UC01 Gerenciar conta e perfil | `GerenciarConta` | `TelaConta` | Usuario |
-| UC02 Cadastrar hábito e metas | `CadastrarHabito` | `TelaEscolhaHabito`, `TelaOpcoesJornada` | Habito, Jornada |
-| UC03 Alternar modo | `EscolherModo` | `TelaOpcoesJornada`, `TelaConfiguracoes` | Jornada |
-| UC04 Desafios em grupo | `GerenciarDesafios` | `TelaDesafios` | Desafio, Convite, Mensagem |
-| UC05 Economia e tempo | `ConsultarEconomia` | `TelaEconomia` | Jornada, Habito |
-| UC06 Gatilho e recaída | `RegistrarGatilho` | `TelaRegistroGatilhos` | RegistroTentacao, Gatilho, Jornada |
-| UC07 Widgets | `UsarWidgets` | `Widget` | Jornada |
-| UC08 Notificações | `ConfigurarNotificacoes` | `TelaConfiguracoes`, `Notificacao` | Usuario |
-| UC09 Check-in | `RegistrarCheckIn` | `TelaPercepcaoEsforco` | CheckInEsforco, Jornada |
-| UC10 Conquistas | `ConsultarConquistas` | `TelaConquistas` | Conquista, Jornada |
-| UC11 SOS | `AcionarSOS` | `TelaSOS` | RegistroTentacao |
-| UC12 Encerrar jornada | `EncerrarJornada` | `TelaJornada` | Jornada |
+| No diagrama | No código / SQLite |
+|---|---|
+| Atributo `char` / `int` / `double` / `boolean` | `TEXT` / `INTEGER` / `REAL` / `INTEGER` (0 ou 1) |
+| Datas `int` sem hora (`dataInicio`, `dataUltimoReinicio`, `data`) | `AAAAMMDD`, ex.: `20261123` (`src/utils/datas.js`) |
+| Datas `int` com hora (`dataHora`, `dataAceiteTermos`) | milissegundos (`Date.now()`) |
+| Composição ◆ (ex.: Jornada ◆ CheckInEsforco) | chave estrangeira na parte (`checkInEsforco.jornadaId`) com `ON DELETE CASCADE` |
+| `E-Jornada ◆ acompanha 1 E-Habito` | `habito.jornadaId` único (um hábito por jornada) |
+| `motivadoPor 0..1 E-Gatilho` | `registroTentacao.gatilhoId` pode ser nulo (RN016) |
+| `E-Usuario.senha` | **não** vai para o SQLite: fica no Firebase Auth com hash (RNF04) |
+| E-Desafio, E-Convite, E-Mensagem | só no Firestore |
+| Notas RN no diagrama | comentário no topo da classe + regra no banco quando possível (RN05, RN021, RN024) |
+
+## Mapa caso de uso → código (conforme os VCPs do Astah)
+
+| UC | VCP no Astah | Controle (C-) | Fronteira (F-) | Entidades (E-) |
+|---|---|---|---|---|
+| UC01 Gerenciar conta e perfil | VCP01 | `GerenciarConta` | `TelaConta` | Usuario, Convite, Desafio, Mensagem |
+| UC02 Cadastrar hábito e metas | VCP02 | `CadastrarHabito` (include `EscolherModo`) | `TelaEscolhaHabito`, `TelaOpcoesJornada` | Usuario, Jornada, Habito |
+| UC03 Escolher modo de desabituação | VCP03 | `EscolherModo` | `TelaOpcoesJornada` | Jornada |
+| UC04 Gerenciar desafios em grupo | VCP04 | `GerenciarDesafios` | `TelaDesafios` | Usuario, Desafio, Convite, Mensagem, Jornada |
+| UC05 Consultar economia e tempo poupado | VCP05 | `ConsultarEconomia` | `TelaEconomia` | Jornada, Habito |
+| UC06 Registrar gatilho e recaída | VCP11 | `RegistrarGatilho` | `TelaRegistroGatilhos` | Jornada, RegistroTentacao, Gatilho, Conquista |
+| UC07 Usar widgets de acompanhamento | VCP12 | `UsarWidgets` | `Widget` | Jornada, Habito |
+| UC08 Configurar notificações motivacionais | VCP06 | `ConfigurarNotificacoes` | `TelaConfiguracoes`, `Notificacao` | Usuario, Jornada, Habito |
+| UC09 Registrar check-in de esforço | VCP07 | `RegistrarCheckIn` | `TelaPercepcaoEsforco` | Jornada, CheckInEsforco |
+| UC10 Consultar medalhas e conquistas | VCP08 | `ConsultarConquistas` | `TelaConquistas` | Jornada, Conquista |
+| UC11 Acionar modo de emergência SOS | VCP09 | `AcionarSOS` (usa `RegistrarGatilho`) | `TelaSOS` | Jornada |
+| UC12 Encerrar jornada | VCP10 | `EncerrarJornada` | `TelaJornada` | Jornada |

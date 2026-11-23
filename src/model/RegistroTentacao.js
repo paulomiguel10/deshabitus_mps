@@ -1,18 +1,21 @@
-// E-RegistroTentacao (motivadoPor -> E-Gatilho)
+// E-RegistroTentacao (DC-ENTIDADE) — parte da E-Jornada: registra (Jornada 1 ◆ 0..*)
+// {RN015: dataHora <= agora} {RN016: gatilho OU motivoLivre, ambos opcionais}
+// {RN029: criado com sincronizado = false}
 import { pendente } from '../utils/pendente';
 
 export class RegistroTentacao {
-  constructor({ id, jornadaId, gatilhoId, dataHora, motivoLivre = null, observacao = null,
-    resultado, sincronizado = false } = {}) {
+  constructor({ id, jornadaId, gatilhoId = null, dataHora, resultado, motivoLivre = null,
+    observacao = null, sincronizado = false } = {}) {
     this.id = id;
-    this.jornadaId = jornadaId;
-    this.gatilhoId = gatilhoId;
-    this.dataHora = dataHora;       // RN15 / RN29
-    this.motivoLivre = motivoLivre; // RN17
-    this.observacao = observacao;
-    this.resultado = resultado;     // Resultado.RESISTIU | Resultado.RECAIU
-    this.sincronizado = sincronizado;
+    this.jornadaId = jornadaId;     // composição com a jornada
+    this.gatilhoId = gatilhoId;     // motivadoPor 0..1
+    this.dataHora = dataHora;       // int (ms)
+    this.resultado = resultado;     // Resultado
+    this.motivoLivre = motivoLivre; // char[0..1]
+    this.observacao = observacao;   // char[0..1]
+    this.sincronizado = sincronizado; // boolean
   }
 
+  // + marcarSincronizado() : void
   marcarSincronizado() { return pendente('RegistroTentacao.marcarSincronizado'); }
 }
