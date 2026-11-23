@@ -5,14 +5,14 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth, firebaseConfigurado } from '../services/firebase';
 import { Usuario } from '../model/Usuario';
 import { buscarUm, paraBoolean } from '../database/banco';
-import { carregarJornadaAtiva } from '../database/consultas';
+import { carregarJornadaAtiva, gravarUsuarioLocal } from '../database/consultas';
 
 const SessaoContext = createContext(null);
 
 // Monta o E-Usuario a partir do Firebase Auth + dados locais (se já existirem no aparelho)
 async function montarUsuario(usuarioFirebase) {
   const linha = await buscarUm('SELECT * FROM usuario WHERE id = ?', usuarioFirebase.uid);
-  return new Usuario({
+  const usuario = new Usuario({
     id: usuarioFirebase.uid,
     nome: linha?.nome ?? usuarioFirebase.displayName ?? '',
     email: linha?.email ?? usuarioFirebase.email,
@@ -20,6 +20,9 @@ async function montarUsuario(usuarioFirebase) {
     dataAceiteTermos: linha?.dataAceiteTermos ?? null,
     notificacoesAtivas: paraBoolean(linha?.notificacoesAtivas),
   });
+  // Sessão salva, mas o usuário ainda não existe neste banco: grava (a jornada depende dele)
+  if (!linha) await gravarUsuarioLocal(usuario);
+  return usuario;
 }
 
 export function SessaoProvider({ children }) {

@@ -82,7 +82,7 @@ Implementar = trocar esse `pendente(...)` pelo código. Procure `TODO` e `penden
 3. **Não crie classe, atributo ou tela fora do diagrama.** Se precisar, atualize o Astah e o documento primeiro.
 4. **Números de progresso passam pela strategy** (`obterModoExibicao(modo)`), senão o modo cego vaza (RN09).
 5. **IDs são UUID** (`novoId()`), nunca autoincremento.
-6. **Mudou o banco?** Crie `SCHEMA_V2` + passo em `migracoes.js`. Não edite o V1.
+6. **Mudou o banco?** Crie uma versão nova (`SCHEMA_V3`...) + um passo em `migracoes.js` e aumente o `VERSAO_SCHEMA`. Nunca edite um schema que já foi publicado.
 7. **Git:** uma branch por caso de uso (`uc06-registrar-gatilho`), `npm run lint` antes do commit, Pull Request para a `main`.
 
 ## Como o DC-ENTIDADE virou código e banco

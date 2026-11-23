@@ -66,22 +66,25 @@ export default function AppNavigator() {
   //   usuário com jornada    -> abas + telas por cima
   return (
     <Stack.Navigator screenOptions={{ headerTintColor: cores.primaria, headerBackTitle: 'Voltar' }}>
+      {/* navigationKey: telas com o mesmo nome em grupos diferentes são recriadas quando o grupo muda.
+          Sem isso, ao criar a jornada o app ficava preso na TelaOpcoesJornada (erro GO_BACK). */}
       {!usuario ? (
-        <Stack.Screen name="TelaConta" component={TelaConta} options={{ headerShown: false }} />
+        <Stack.Screen name="TelaConta" component={TelaConta} options={{ headerShown: false }} navigationKey="sem-usuario" />
       ) : !jornada ? (
-        <>
+        <Stack.Group navigationKey="sem-jornada">
           <Stack.Screen name="TelaEscolhaHabito" component={TelaEscolhaHabito} options={{ title: 'Seu hábito' }} />
           <Stack.Screen name="TelaOpcoesJornada" component={TelaOpcoesJornada} options={{ title: 'Sua jornada' }} />
           <Stack.Screen name="TelaConta" component={TelaConta} options={{ title: 'Conta' }} />
-        </>
+        </Stack.Group>
       ) : (
-        <>
+        <Stack.Group navigationKey="com-jornada">
           <Stack.Screen name="Abas" component={Abas} options={{ headerShown: false }} />
           <Stack.Screen name="TelaSOS" component={TelaSOS} options={{ title: 'SOS', presentation: 'fullScreenModal' }} />
           <Stack.Screen name="TelaRegistroGatilhos" component={TelaRegistroGatilhos} options={{ title: 'Registrar' }} />
           <Stack.Screen name="TelaPercepcaoEsforco" component={TelaPercepcaoEsforco} options={{ title: 'Check-in' }} />
+          <Stack.Screen name="TelaOpcoesJornada" component={TelaOpcoesJornada} options={{ title: 'Modo' }} />
           <Stack.Screen name="TelaConta" component={TelaConta} options={{ title: 'Conta' }} />
-        </>
+        </Stack.Group>
       )}
     </Stack.Navigator>
   );

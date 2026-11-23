@@ -41,6 +41,14 @@ const MENSAGENS = {
   'auth/too-many-requests': 'Muitas tentativas. Aguarde alguns minutos e tente de novo.',
   'auth/network-request-failed': 'Sem conexão com a internet.',
   'auth/requires-recent-login': 'Por segurança, entre novamente na conta e repita a operação.',
+  'auth/operation-not-allowed': 'O login por e-mail e senha não está ativado no Firebase (Authentication > Método de login).',
+  'auth/invalid-api-key': 'Chave do Firebase inválida: confira o apiKey no arquivo .env.',
+  'auth/api-key-not-valid.-please-pass-a-valid-api-key.': 'Chave do Firebase inválida: confira o apiKey no arquivo .env.',
+  'auth/app-not-authorized': 'App não autorizado no Firebase: confira o appId no arquivo .env.',
 };
 
-export const traduzirErroFirebase = (erro) => MENSAGENS[erro?.code] ?? 'Não foi possível concluir. Tente novamente.';
+// Erros não previstos mostram o código, para facilitar o diagnóstico
+export function traduzirErroFirebase(erro) {
+  console.warn('[Firebase]', erro?.code, erro?.message);
+  return MENSAGENS[erro?.code] ?? `Não foi possível concluir. (${erro?.code ?? erro?.message ?? 'erro desconhecido'})`;
+}

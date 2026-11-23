@@ -12,7 +12,15 @@ export class Habito {
   }
 
   // + possuiDadosCompletos() : boolean  (RN06)
-  possuiDadosCompletos() { return pendente('Habito.possuiDadosCompletos'); }
+  // RN06: consumo diário e custo unitário obrigatórios · RN08: tempo médio obrigatório
+  // (custo 0 é aceito: hábitos como redes sociais não custam dinheiro)
+  possuiDadosCompletos() {
+    const inteiroPositivo = (v) => Number.isInteger(v) && v > 0;
+    return Boolean(this.nome?.trim())
+      && inteiroPositivo(this.consumoDiario)
+      && typeof this.custoUnitario === 'number' && Number.isFinite(this.custoUnitario) && this.custoUnitario >= 0
+      && inteiroPositivo(this.tempoMedioConsumo);
+  }
   // + calcularEconomia(dias : int) : double  (RN013)
   calcularEconomia(dias) { return pendente('Habito.calcularEconomia'); }
   // + calcularTempoPoupado(dias : int) : int  (RN014)

@@ -6,7 +6,12 @@
 // Ela vai só para o Firebase Authentication, que guarda o hash.
 import { deleteUser, sendPasswordResetEmail, signInWithEmailAndPassword, updateProfile, verifyBeforeUpdateEmail } from 'firebase/auth';
 import { pendente } from '../utils/pendente';
-import { buscarUm, executar, paraBoolean } from '../database/banco';
+import { buscarUm, emTransacao, executar, paraBoolean } from '../database/banco';
+import { Jornada } from './Jornada';
+import { Habito } from './Habito';
+import { ModoDesabituacao } from './enums';
+import { novoId } from '../utils/ids';
+import { hoje } from '../utils/datas';
 import { gravarUsuarioLocal } from '../database/consultas';
 import { auth, traduzirErroFirebase } from '../services/firebase';
 import { apagarDadosDoUsuario } from '../services/nuvem';
@@ -99,8 +104,31 @@ export class Usuario {
   }
 
   // + criarJornada(nome, consumoDiario : int, custoUnitario : double, tempoMedioConsumo : int, dataInicio : int, metaDias : int, modo : ModoDesabituacao) : E-Jornada
-  criarJornada(nome, consumoDiario, custoUnitario, tempoMedioConsumo, dataInicio, metaDias, modo) {
-    return pendente('Usuario.criarJornada');
+  // Cria a E-Jornada e o E-Habito dela (composições "possui" e "acompanha") numa única transação.
+  async criarJornada(nome, consumoDiario, custoUnitario, tempoMedioConsumo, dataInicio, metaDias, modo) {
+    if (await this.possuiJornadaAtiva()) {
+      throw new ErroNegocio('Você já tem uma jornada ativa. Encerre-a antes de cadastrar outro hábito.'); // RN05
+    }
+    const habito = new Habito({ id: novoId(), nome, consumoDiario, custoUnitario, tempoMedioConsumo });
+    if (!habito.possuiDadosCompletos()) {
+      throw new ErroNegocio('Preencha o hábito, o consumo diário, o custo unitário e o tempo médio por consumo.'); // RN06, RN08
+    }
+    if (!dataInicio || dataInicio > hoje()) throw new ErroNegocio('A data de início não pode ser no futuro.'); // RN07
+    if (!Object.values(ModoDesabituacao).includes(modo)) throw new ErroNegocio('Escolha o modo de desabituação.');
+
+    const jornada = new Jornada({ id: novoId(), usuarioId: this.id, dataInicio, metaDias: metaDias ?? null, modo, ativa: true });
+    habito.jornadaId = jornada.id;
+    await emTransacao(async () => {
+      await executar(
+        'INSERT INTO jornada (id, usuarioId, dataInicio, dataUltimoReinicio, metaDias, modo, ativa) VALUES (?, ?, ?, NULL, ?, ?, 1)',
+        jornada.id, jornada.usuarioId, jornada.dataInicio, jornada.metaDias, jornada.modo
+      );
+      await executar(
+        'INSERT INTO habito (id, jornadaId, nome, consumoDiario, custoUnitario, tempoMedioConsumo) VALUES (?, ?, ?, ?, ?, ?)',
+        habito.id, habito.jornadaId, habito.nome, habito.consumoDiario, habito.custoUnitario, habito.tempoMedioConsumo
+      );
+    });
+    return jornada;
   }
   // + criarDesafio(nome : char) : E-Desafio
   criarDesafio(nome) { return pendente('Usuario.criarDesafio'); }

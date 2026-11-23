@@ -8,6 +8,8 @@
 //              conquista (1 ◆ 0..*) E-Conquista
 import { ModoDesabituacao } from './enums';
 import { pendente } from '../utils/pendente';
+import { executar } from '../database/banco';
+import { ErroNegocio } from '../utils/erros';
 
 export class Jornada {
   constructor({ id, usuarioId, dataInicio, dataUltimoReinicio = null, metaDias = null,
@@ -22,7 +24,12 @@ export class Jornada {
   }
 
   // + alternarModo(modo : ModoDesabituacao) : void  (RN09, RN010)
-  alternarModo(modo) { return pendente('Jornada.alternarModo'); }
+  // RN010: trocar de modo não apaga nem altera nenhum outro dado
+  async alternarModo(modo) {
+    if (!Object.values(ModoDesabituacao).includes(modo)) throw new ErroNegocio('Modo de desabituação inválido.');
+    await executar('UPDATE jornada SET modo = ? WHERE id = ?', modo, this.id);
+    this.modo = modo;
+  }
   // + calcularDiasConsecutivos() : int  (RN019)
   calcularDiasConsecutivos() { return pendente('Jornada.calcularDiasConsecutivos'); }
   // + obterModo() : ModoDesabituacao

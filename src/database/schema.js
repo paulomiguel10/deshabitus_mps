@@ -7,11 +7,16 @@
 // E-Desafio, E-Convite e E-Mensagem NÃO ficam aqui: só existem no Firestore (exigem internet).
 // A senha do E-Usuario NÃO fica aqui: vai para o Firebase Authentication (RNF04 / ADR-005).
 
-export const VERSAO_SCHEMA = 1;
+// Histórico de versões:
+//   1 – base inicial (antes do ajuste ao DC-ENTIDADE; tinha jornada.habitoId e jornadaConquista)
+//   2 – estrutura igual ao DC-ENTIDADE (atual)
+export const VERSAO_SCHEMA = 2;
 
-export const SCHEMA_V1 = `
-PRAGMA journal_mode = WAL;
-PRAGMA foreign_keys = ON;
+// Tabelas da versão 1, apagadas na migração para a 2 (ainda não havia dados reais).
+// Ordem: primeiro as que apontam para outras (filhas), depois as "mães".
+export const TABELAS_V1 = ['jornadaConquista', 'conquista', 'checkInEsforco', 'registroTentacao', 'habito', 'jornada', 'gatilho', 'usuario'];
+
+export const SCHEMA_V2 = `
 
 -- E-Usuario
 CREATE TABLE IF NOT EXISTS usuario (
