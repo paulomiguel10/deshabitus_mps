@@ -32,6 +32,13 @@ export function SessaoProvider({ children }) {
     setJornada(u ? await carregarJornadaAtiva(u.id) : null);
   }, [usuario]);
 
+  // Relê o usuário logado (depois do cadastro ou de alterar o perfil)
+  const recarregarUsuario = useCallback(async () => {
+    const u = auth?.currentUser ? await montarUsuario(auth.currentUser) : null;
+    setUsuario(u);
+    return u;
+  }, []);
+
   useEffect(() => {
     if (!firebaseConfigurado) return undefined;
     // Chamado ao abrir o app (sessão salva) e a cada login/logout
@@ -44,7 +51,7 @@ export function SessaoProvider({ children }) {
   }, []);
 
   return (
-    <SessaoContext.Provider value={{ carregando, usuario, setUsuario, jornada, recarregarJornada }}>
+    <SessaoContext.Provider value={{ carregando, usuario, recarregarUsuario, jornada, recarregarJornada }}>
       {children}
     </SessaoContext.Provider>
   );

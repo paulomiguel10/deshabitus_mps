@@ -72,6 +72,7 @@ export default function AppNavigator() {
         <>
           <Stack.Screen name="TelaEscolhaHabito" component={TelaEscolhaHabito} options={{ title: 'Seu hábito' }} />
           <Stack.Screen name="TelaOpcoesJornada" component={TelaOpcoesJornada} options={{ title: 'Sua jornada' }} />
+          <Stack.Screen name="TelaConta" component={TelaConta} options={{ title: 'Conta' }} />
         </>
       ) : (
         <>
@@ -79,6 +80,7 @@ export default function AppNavigator() {
           <Stack.Screen name="TelaSOS" component={TelaSOS} options={{ title: 'SOS', presentation: 'fullScreenModal' }} />
           <Stack.Screen name="TelaRegistroGatilhos" component={TelaRegistroGatilhos} options={{ title: 'Registrar' }} />
           <Stack.Screen name="TelaPercepcaoEsforco" component={TelaPercepcaoEsforco} options={{ title: 'Check-in' }} />
+          <Stack.Screen name="TelaConta" component={TelaConta} options={{ title: 'Conta' }} />
         </>
       )}
     </Stack.Navigator>

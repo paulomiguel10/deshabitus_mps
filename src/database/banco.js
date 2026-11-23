@@ -13,6 +13,8 @@ let banco = null;
 // Abre o banco (uma vez só) e cria/atualiza as tabelas. Chamado em App.js ao iniciar.
 export async function iniciarBanco() {
   if (!banco) banco = openDatabaseSync(NOME_BANCO);
+  // As chaves estrangeiras (composições ◆) valem por conexão: ligar sempre que abrir
+  await banco.execAsync('PRAGMA foreign_keys = ON');
   await migrarBanco(banco);
   return banco;
 }

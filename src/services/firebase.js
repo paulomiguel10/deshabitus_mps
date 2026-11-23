@@ -29,3 +29,18 @@ if (firebaseConfigurado) {
 }
 
 export { app, auth, firestore };
+
+// Mensagens em português para os erros do Firebase Auth
+const MENSAGENS = {
+  'auth/email-already-in-use': 'Este e-mail já tem uma conta.', // RN01
+  'auth/invalid-email': 'E-mail inválido.',
+  'auth/weak-password': 'A senha precisa ter pelo menos 6 caracteres.',
+  'auth/invalid-credential': 'E-mail ou senha incorretos.',
+  'auth/wrong-password': 'E-mail ou senha incorretos.',
+  'auth/user-not-found': 'E-mail ou senha incorretos.',
+  'auth/too-many-requests': 'Muitas tentativas. Aguarde alguns minutos e tente de novo.',
+  'auth/network-request-failed': 'Sem conexão com a internet.',
+  'auth/requires-recent-login': 'Por segurança, entre novamente na conta e repita a operação.',
+};
+
+export const traduzirErroFirebase = (erro) => MENSAGENS[erro?.code] ?? 'Não foi possível concluir. Tente novamente.';
